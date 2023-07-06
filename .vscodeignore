@@ -1,0 +1,6 @@
+.vscode/**
+.vscodeignore
+.git/**
+vsix/**
+*.vsix
+*.log
