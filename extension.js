@@ -19,7 +19,7 @@ async function generateTreeMap(dir, prefix, includedDirs) {
         const childPrefix = prefix + (isLast ? '   ' : ' ┃ ');
 
         if (type === vscode.FileType.Directory) {
-            if (includedDirs.length === 0 || includedDirs.includes(filePath)) {
+            if (includedDirs.includes(filePath)) {
                 output += `<span style="color:white">${linePrefix}<span style="color:white">${file}</span></span>\n`;
                 output += await generateTreeMap(filePath, childPrefix, includedDirs);
             }
@@ -36,7 +36,8 @@ async function generateCheckboxTree(dir, prefix, includedDirs = []) {
     const entries = await vscode.workspace.fs.readDirectory(vscode.Uri.file(dir));
     let output = '';
 
-    const directories = entries.filter(([_, type]) => type === vscode.FileType.Directory).sort(([a, _], [b, __]) => a.toLowerCase().localeCompare(b.toLowerCase()));
+    const filteredEntries = entries.filter(([file, _]) => file !== '.git' && file !== '.DS_Store');
+    const directories = filteredEntries.filter(([_, type]) => type === vscode.FileType.Directory).sort(([a, _], [b, __]) => a.toLowerCase().localeCompare(b.toLowerCase()));
 
     for (let i = 0; i < directories.length; i++) {
         const [file, _] = directories[i];
@@ -73,19 +74,56 @@ async function activate(context) {
             const checkboxTree = rootName + '\n' + await generateCheckboxTree(rootPath, '', allDirs);
             panel.webview.html = `
                 <body style="background-color: #24292E; color: #FFFFFF;">
-                    <pre>${checkboxTree}</pre>
-                    <button id="regenerate">Regenerate</button>
+                    <button id="toggleCheckboxTree">Show Select Directories</button>
+                    <br>
+                    <div id="checkboxTree" style="display: none;"><pre>${checkboxTree}</pre>
+                    <button id="regenerate">Regenerate</button></div>
+                    <br>
                     <hr>
                     <pre>${output}</pre>
                     <script>
                         const vscode = acquireVsCodeApi();
+                        const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+                        checkboxes.forEach(checkbox => {
+                            checkbox.addEventListener('change', function() {
+                                const value = this.value;
+                                const isChecked = this.checked;
+                                // Check/uncheck parents
+                                if (isChecked) {
+                                    let parentValue = value;
+                                    while (parentValue.lastIndexOf('/') > 0) {
+                                        parentValue = parentValue.substring(0, parentValue.lastIndexOf('/'));
+                                        const parentCheckbox = Array.from(checkboxes).find(cb => cb.value === parentValue);
+                                        if (parentCheckbox) {
+                                            parentCheckbox.checked = true;
+                                        }
+                                    }
+                                } else {
+                                    // Uncheck children
+                                    checkboxes.forEach(cb => {
+                                        if (cb.value.startsWith(value)) {
+                                            cb.checked = false;
+                                        }
+                                    });
+                                }
+                            });
+                        });
                         document.getElementById('regenerate').addEventListener('click', () => {
-                            const checkboxes = document.querySelectorAll('input[type="checkbox"]');
                             const includedDirs = Array.from(checkboxes).filter(cb => cb.checked).map(cb => cb.value);
                             vscode.postMessage({
                                 command: 'regenerate',
                                 includedDirs: includedDirs
                             });
+                        });
+                        document.getElementById('toggleCheckboxTree').addEventListener('click', () => {
+                            const checkboxTree = document.getElementById('checkboxTree');
+                            if (checkboxTree.style.display === 'none') {
+                                checkboxTree.style.display = 'block';
+                                document.getElementById('toggleCheckboxTree').innerText = 'Hide Select Directories';
+                            } else {
+                                checkboxTree.style.display = 'none';
+                                document.getElementById('toggleCheckboxTree').innerText = 'Show Select Directories';
+                            }
                         });
                     </script>
                 </body>
@@ -100,19 +138,56 @@ async function activate(context) {
                             const checkboxTree = rootName + '\n' + await generateCheckboxTree(rootPath, '', message.includedDirs);
                             panel.webview.html = `
                                 <body style="background-color: #24292E; color: #FFFFFF;">
-                                    <pre>${checkboxTree}</pre>
-                                    <button id="regenerate">Regenerate</button>
+                                    <button id="toggleCheckboxTree">Hide Select Directories</button>
+                                    <br>
+                                    <div id="checkboxTree"><pre>${checkboxTree}</pre>
+                                    <button id="regenerate">Regenerate</button></div>
+                                    <br>
                                     <hr>
                                     <pre>${output}</pre>
                                     <script>
                                         const vscode = acquireVsCodeApi();
+                                        const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+                                        checkboxes.forEach(checkbox => {
+                                            checkbox.addEventListener('change', function() {
+                                                const value = this.value;
+                                                const isChecked = this.checked;
+                                                // Check/uncheck parents
+                                                if (isChecked) {
+                                                    let parentValue = value;
+                                                    while (parentValue.lastIndexOf('/') > 0) {
+                                                        parentValue = parentValue.substring(0, parentValue.lastIndexOf('/'));
+                                                        const parentCheckbox = Array.from(checkboxes).find(cb => cb.value === parentValue);
+                                                        if (parentCheckbox) {
+                                                            parentCheckbox.checked = true;
+                                                        }
+                                                    }
+                                                } else {
+                                                    // Uncheck children
+                                                    checkboxes.forEach(cb => {
+                                                        if (cb.value.startsWith(value)) {
+                                                            cb.checked = false;
+                                                        }
+                                                    });
+                                                }
+                                            });
+                                        });
                                         document.getElementById('regenerate').addEventListener('click', () => {
-                                            const checkboxes = document.querySelectorAll('input[type="checkbox"]');
                                             const includedDirs = Array.from(checkboxes).filter(cb => cb.checked).map(cb => cb.value);
                                             vscode.postMessage({
                                                 command: 'regenerate',
                                                 includedDirs: includedDirs
                                             });
+                                        });
+                                        document.getElementById('toggleCheckboxTree').addEventListener('click', () => {
+                                            const checkboxTree = document.getElementById('checkboxTree');
+                                            if (checkboxTree.style.display === 'none') {
+                                                checkboxTree.style.display = 'block';
+                                                document.getElementById('toggleCheckboxTree').innerText = 'Hide Select Directories';
+                                            } else {
+                                                checkboxTree.style.display = 'none';
+                                                document.getElementById('toggleCheckboxTree').innerText = 'Show Select Directories';
+                                            }
                                         });
                                     </script>
                                 </body>
