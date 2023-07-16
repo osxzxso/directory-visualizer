@@ -14,7 +14,7 @@ CURRENT FEATURES
 ----------------
 1. **Tree Map Generation**: Generate a tree map of your workspace's directory structure.
 2. **Directory Selection**: Choose which directories to include in the tree map.
-3. **Color-Coding of Files**: Assign colors to different file types for easy identification.
+3. **Color-Coding of Files**: Assign colors to different groups of file types for easy identification.
 4. **Set Specific Exclusions**: Exclude specific directories, files, or file types from the tree map.
 5. **Regeneration**: Regenerate the tree map after making changes to the included directories, custom colors, or specific exclusions.
 6. **Copy and Export**: Copy the tree map to your clipboard or export it to a text file.
@@ -29,7 +29,9 @@ UPCOMING FEATURES/IDEAS
 6. **Integration with Git**: Show the Git status of each file and directory in the tree map.
 7. **Filtering Options**: Filter the tree map by file type, size, date, Git status, etc.
 8. **Bulk Add/Remove Exclusions**: Add or remove exclusions in bulk.
-9. **Improved Color Selection**: More color options and the ability to assign colors to specific directories or files.
+9. **Improved Color Selection**: More color options and the ability to assign colors to specific directories, files, or file types.
+10. **Persistent Workspace Settings**: Allow for unique persistent settings for each workspace.
+11. **Common Colors/Exclusions**: Create color schemes and exclusion sets that can be applied/added to any workspace with a single click.
 
 CURRENT VERSION - 1.0.0
 -----------------------

@@ -1,8 +1,8 @@
 .vscode/**
 .vscodeignore
 .git/**
+exports/**
 vsix/**
-testing/**
 *.vsix
 *.log
 folder/**
