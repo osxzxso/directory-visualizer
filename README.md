@@ -8,7 +8,7 @@ Directory Visualizer is a Visual Studio Code (VSC) extension that allows you to 
 
 DEMO
 ----
-![Demo](https://raw.githubusercontent.com/osxzxso/directory-visualizer/main/media/directory-visualizer-demo.gif "Demo")
+![Demo](https://raw.githubusercontent.com/osxzxso/directory-visualizer/main/media/desktop-visualizer-demo.gif "Demo")
 
 CURRENT FEATURES
 ----------------
