@@ -3,7 +3,6 @@
 .git/**
 vsix/**
 testing/**
-media/**
 *.vsix
 *.log
 folder/**

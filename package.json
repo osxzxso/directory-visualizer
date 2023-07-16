@@ -2,6 +2,7 @@
     "name": "directory-visualizer",
     "displayName": "Directory Visualizer",
     "description": "Generate a text based representation of a project directory.",
+    "icon": "media/directory-visualizer-logo.png",
     "version": "1.0.0",
     "publisher": "osxzxso",
     "repository": {
