@@ -6,6 +6,10 @@ OVERVIEW
 
 Directory Visualizer is a Visual Studio Code (VSC) extension that allows you to customize and generate a text based representation of a project directory.
 
+DEMO
+----
+![Demo](https://raw.githubusercontent.com/osxzxso/directory-visualizer/main/media/directory-visualizer-demo.gif "Demo")
+
 CURRENT FEATURES
 ----------------
 1. **Tree Map Generation**: Generate a tree map of your workspace's directory structure.
