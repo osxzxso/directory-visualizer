@@ -6,3 +6,4 @@ testing/**
 media/**
 *.vsix
 *.log
+folder/**
